@@ -48,10 +48,11 @@ router.post("/", async function (req, res, next) {
 
 router.put("/:isbn", async function (req, res, next) {
   try {
-    const book = await Book.update(req.params.isbn, req.body);
+    const validationResult = jsonschema.validate(req.body, bookSchema);
     if (!validationResult.valid) {
       throw new ExpressError(validationResult.errors, 400);
     }
+    const book = await Book.update(req.params.isbn, req.body);
     return res.json({ book });
   } catch (err) {
     return next(err);
